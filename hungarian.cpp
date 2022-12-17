@@ -43,23 +43,107 @@ int index_with_max_val(vector<int> v){
     return max_ind;
 }
 
+int index_with_min_val(vector<int> v){
+    int max_ind = 0;
+    for (int i = 0; i < v.size(); i++){
+        if (v[i] < v[max_ind]){
+            max_ind = i;
+        }
+    }
+    return max_ind;
+}
+
+
+bool find_one_zero(vector<vector<int>> &mat, vector<int> &answer){
+    int n = mat.size();
+    vector<int> zeros_in_row(n, 0);
+    vector<int> zeros_in_col(n, 0);
+
+    bool found_zero = false;
+
+    // obliczamy liczbe zer w kazdej kolumnie i w kazdym wierszu
+    for (int i = 0; i < n; i++){
+        for (int j = 0; j < n; j++){
+            if (mat[i][j] != 0)
+                continue;
+            // else:
+            zeros_in_row[i]++;
+            zeros_in_col[j]++;
+            found_zero = true;
+        }
+    }
+
+    if(!found_zero){
+        return false;
+    }
+
+    // podmien wartosci zero aby kod działa
+    for (int i = 0; i < n; i++){
+        if (zeros_in_col[i]==0)
+            zeros_in_col[i] = INF;
+        
+        if (zeros_in_row[i]==0)
+            zeros_in_row[i] = INF; 
+    }
+
+    // obliczamy gdzie jest najmniej zer
+    int row_min_ind = index_with_min_val(zeros_in_row);
+    int col_min_ind = index_with_min_val(zeros_in_col);
+
+    int min_zero_count = zeros_in_row[row_min_ind] < zeros_in_col[col_min_ind] ? zeros_in_row[row_min_ind] : zeros_in_col[col_min_ind]; 
+
+    // jesli jest ich najmniej w któryms z wierszy
+    if (zeros_in_row[row_min_ind] == min_zero_count){
+        // znajdz to zero
+        for (int j = 0; j < n; j++){
+            if (mat[row_min_ind][j] != 0)
+                continue;
+            
+            //else
+            answer[row_min_ind] = j;
+            
+            set_col(mat, 1, j);
+            set_row(mat, 1, row_min_ind);
+
+            return true;
+        }
+
+    }
+    else { // najmiej zer jest w którejs z kolumn
+        // analogicznie to co wyzej 
+        // znajdz to zero
+        for (int i = 0; i < n; i++){
+            if (mat[i][col_min_ind] != 0)
+                continue;
+            
+            //else
+            answer[i] = col_min_ind;
+
+            set_row(mat, 1, i);
+            set_col(mat, col_min_ind, 1);
+
+            return true;
+        }
+    }
+
+    return true;
+
+}
+
 // zwraca matching o minimalnym koszcie w macierzy nxn  zakłądając
 // ze wartości "true" w macierzy nie da się pokryć liczba lini mniejszą niż n
 // zwraca odppwiedź w następujący sposób
 // przypisanie par w formie (indeks, wartość)
 // [2, 4, 0, 1, 3] => (0, 2), (1, 4), (2, 0), (3, 1), (4, 3)
 vector<int> find_answer(vector<vector<int>> mat){    
-    vector<int> answer(mat.size(), -1);
-    for (int i = 0; i < mat.size(); i++){
-        for (int j = 0; j < mat.size(); j++){
-            if (mat[i][j] == 0){
-                // znaleziono wartość true
-                answer[i] = j;
-                // wykreśl pozostałe wartości true w tym wierszu i w tej kolumnie 
-                set_row(mat, 1, i);
-                set_col(mat, 1, j);
+    int n = mat.size();
+    vector<int> answer(n, -1);
 
-            }
+    while (1){
+        bool found_zero = find_one_zero(mat, answer);
+        
+        if(!found_zero){
+            return answer;
         }
     }
 
@@ -283,14 +367,14 @@ vector<int> hungarian(vector<vector<int>> cost_matrix){
 
 
 // === początek kroku 3 ===
-    // inicjalizacja zmiennych dla kolejnych cześci algo
-    vector<vector<int>> line_count(n, vector<int>(n, 0));
-    vector<vector<int>> lines_drawn(n, vector<int>(n, 0));
+    
     // wykonuj dopóki liczba lini potrzebych do pokrycia wszystkich 0 < n
     while(1) {
+        // inicjalizacja zmiennych dla kolejnych cześci algo
+        vector<vector<int>> lines_drawn(n, vector<int>(n, 0));
 
         int line_count = draw_lines(cost_matrix, lines_drawn);
-        
+  
         if (line_count == n){
             // konczymy 
             return find_answer(cost_matrix);
@@ -299,15 +383,18 @@ vector<int> hungarian(vector<vector<int>> cost_matrix){
             cost_matrix = step_4(cost_matrix, lines_drawn);
 
         }
+
     }
 }
 
 // int main(){
-//     vector<vector<int>> mat({
-//         {13, 4, 55, 4},
-//         {4, 14, 13, 4},
-//         {13, 12, 2, 4}, 
-//         {13, 12, 2, 4}
+//      vector<vector<int>> mat({
+//         {1, 4, 1, 4, 6},
+//         {4, 14, 0, 4, 77},
+//         {13, 4, 4, 4, 1}, 
+//         {13, 12, 2, 4, 3},
+//         {13, 12, 2, 4, 5}
+
 //     });
 
 //     vector<int> out = hungarian(mat);

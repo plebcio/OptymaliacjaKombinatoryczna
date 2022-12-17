@@ -14,8 +14,7 @@ using namespace std;
 
 int main(){
 
-    Graph testG(7
-    );
+    Graph testG(7);
     testG.add_arc(0, 6);
     testG.add_arc(4, 2);
      

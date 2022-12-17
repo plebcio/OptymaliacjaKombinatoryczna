@@ -52,16 +52,24 @@ Graph Greedy_make_graph_even(Graph g){
     // zamiast O(n!) jest O(n^4) - mozna poprawić do O(n^3) jeśli poprawimy tego loopa wyżej z dijkstrą
     vector <int> matching = hungarian(matching_cost);
 
+    // posortuj matching po kosztach 
+    
+    vector<bool> matched(n_uneven, false);
+
     // dodaje odpowiednie połączenia w grafie
-    for (int i = 0; i <matching.size(); i++){
+    for (int i = 0; i <matching.size(); i++){        
+
+        if (matched[i] || matched[matching[i]]){
+            continue;
+        }
+
+        matched[i] = true;
+        matched[matching[i]] = true;
         g.add_arc(uneven_V[i], uneven_V[matching[i]] );
         g.arc_cost[g.n_vertex*uneven_V[i] + uneven_V[matching[i]]];
     }
 
-    if(!isEven(g)){
-        cout << "matching sie nie udał\n";
-        throw "bad";
-    }
+  
 
     return g;
 }
