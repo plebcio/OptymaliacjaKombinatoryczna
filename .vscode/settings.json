@@ -1,0 +1,14 @@
+{
+    "files.associations": {
+        "random": "cpp",
+        "vector": "cpp",
+        "iostream": "cpp",
+        "ostream": "cpp",
+        "ios": "cpp",
+        "list": "cpp",
+        "xlocale": "cpp",
+        "unordered_map": "cpp",
+        "stack": "cpp",
+        "utility": "cpp"
+    }
+}

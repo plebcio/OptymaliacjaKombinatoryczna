@@ -52,7 +52,6 @@ Graph Greedy_make_graph_even(Graph g){
     // zamiast O(n!) jest O(n^4) - mozna poprawić do O(n^3) jeśli poprawimy tego loopa wyżej z dijkstrą
     vector <int> matching = hungarian(matching_cost);
 
-    // posortuj matching po kosztach 
     
     vector<bool> matched(n_uneven, false);
 
@@ -68,8 +67,6 @@ Graph Greedy_make_graph_even(Graph g){
         g.add_arc(uneven_V[i], uneven_V[matching[i]] );
         g.arc_cost[g.n_vertex*uneven_V[i] + uneven_V[matching[i]]];
     }
-
-  
 
     return g;
 }
