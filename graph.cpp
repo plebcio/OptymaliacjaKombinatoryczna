@@ -94,6 +94,10 @@ void Graph::fill_arc_to_density(float d){
 
 void Graph::creat_prev_list(){
     for (int i = 0;  i < n_vertex; i++){
+        arc_prev[i].clear();
+    }
+
+    for (int i = 0;  i < n_vertex; i++){
         for (auto elem: arc_adj[i]){
             arc_prev[elem].push_back(i); 
         }

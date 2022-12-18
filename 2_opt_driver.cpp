@@ -3,13 +3,14 @@
 
 #include "graph.hpp"
 #include "dijkstra.hpp"
-#include "hungarian.hpp"
+#include "2_opt.hpp"
 
 using namespace std;
 
 
 // zwraca graf parzysty
-Graph Greedy_make_graph_even(Graph g){
+Graph generate_even_2_opt(Graph g){
+
     if (isEven(g)){
         return g;
     }
@@ -31,9 +32,7 @@ Graph Greedy_make_graph_even(Graph g){
         throw "cant have graph with odd number of uneven vertexes";
     }
 
-    // znajdz takie połączenie wierzchołków w pary ze suma kosztów dodania takich krawedzi jest minimalny 
-    // minimal cost matching problem
-
+  
 
     // obliczam koszt dla kazdej pary wierzchołków
     vector <vector<int>> matching_cost(n_uneven, vector<int> (n_uneven, -1));
@@ -41,38 +40,31 @@ Graph Greedy_make_graph_even(Graph g){
     for (int i = 0; i < uneven_V.size(); i++){
         for (int j = 0; j < uneven_V.size(); j++){
             if (i == j){
-                matching_cost[i][j] = INF;
+                matching_cost[i][j] == INF;
             } else {
                 matching_cost[i][j] = dijkstra_mixed_graph(uneven_V[i], uneven_V[j], g);
             }
         }  
     }
-
    
-    // znajdujemy matching o minimalnym koszcie uzywając medoty węgiersiej
-    // ref https://en.wikipedia.org/wiki/Hungarian_algorithm
-    // zamiast O(n!) jest O(n^4) - mozna poprawić do O(n^3) jeśli poprawimy tego loopa wyżej z dijkstrą
-    vector <int> matching = hungarian(matching_cost);
 
 
-    vector<bool> matched(n_uneven, false);
-
-    // dodaje odpowiednie połączenia w grafie
-    for (int i = 0; i < matching.size(); i++){        
-
-        if (matched[i] || matched[matching[i]]){
-            continue;
-        }
-
-        matched[i] = true;
-        matched[matching[i]] = true;
-
+    // lista par dodanych łuków
+    vector<pair<int, int>> added_arcs;
     
 
-        g.add_arc(uneven_V[i], uneven_V[matching[i]] );
-        g.arc_cost[uneven_V[i]*g.n_vertex + uneven_V[matching[i]] ] = matching_cost[i][ matching[i] ];
+    // ulepszamy matching za pomocą 2_opt
+    added_arcs = improve_2_opt(added_arcs, matching_cost);
+
+ 
+
+    for (auto pair: added_arcs){
+       
+        int a = uneven_V[pair.first];
+        int b = uneven_V[pair.second];
+        g.add_arc(a, b);
+        g.arc_cost[a*g.n_vertex + b] = matching_cost[pair.first][pair.second];
     }
 
-    g.creat_prev_list();
     return g;
 }

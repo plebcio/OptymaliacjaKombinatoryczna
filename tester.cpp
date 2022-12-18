@@ -19,33 +19,20 @@ int main(){
     float den = 0.1;
 
 
-    for (int i =0; i < 6; i++){
-        Graph g = generate_graph(5 + i, den, den, false);
-        if (!isConnected_from_v(4, g)){
-            cout << "failed on i = " << i << endl;
-            g.printOut();
-            exit(1);
-        }
+    for (int i = 0; i < 6; i++){
+        Graph g = generate_graph(5 + i, den, den, true);
+        
         cout << "made the graph\n";
 
         Graph greedy = Greedy_make_graph_even(g);
-        cout << "greedy with cost = " <<  graph_cost(g) << "\n";
-        
-        Graph bruteforce = make_even_brute_force(g);
-        cout << "brute with cost = " <<  graph_cost(g) << "\n";
-
-
+        cout << "greedy with cost = " <<  graph_cost(greedy) << "\n";
+      
         if (!isEven(greedy)){
             cout << "failed greedy on i = " << i << endl;
-            g.printOut();
+            greedy.printOut();
             exit(2);
         }
 
-        if (!isEven(bruteforce)){
-            cout << "failed bruteforce on i = " << i << endl;
-            g.printOut();
-            exit(2);
-        }
 
     }
     cout << "didn't fail";

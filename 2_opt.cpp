@@ -50,7 +50,7 @@ vector<pair<int, int>> improve_2_opt(vector<pair<int, int>> nexts, vector<vector
 
 // inny rodzaj zastosowania heurystyki lokalnego przeszukania
 // zamienia pare łuków (a,b), (c,d) w forme (a, b) (a, c) (a, d)
-vector<pair<int, int>> improve_2_opt(vector<pair<int, int>> nexts, vector<vector<int>> matching_cost ){
+vector<pair<int, int>> merge_pairs(vector<pair<int, int>> nexts, vector<vector<int>> matching_cost ){
     int n = nexts.size();
 
     // dla kazdej pary łuków sprawdz czy ich zamiana poprawi jakość rozwiązania

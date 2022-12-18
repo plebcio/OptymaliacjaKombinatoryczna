@@ -96,7 +96,6 @@ Graph make_even_brute_force(Graph g){
     int n_prim = all_possible_pairs.size();
     for (int k = n_uneven/2; k < n_uneven; k++){
     
-        cout << "k = " << k << " until " << n_prim <<  endl;
 
         // kazda kombinacja to wektor indeksów do wektora all_possible_pairs
         vector<vector<int>> combiantions = comb(all_possible_pairs.size(), k);
