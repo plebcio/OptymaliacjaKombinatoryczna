@@ -9,43 +9,44 @@
 #include "bruteforce.hpp"
 #include "dijkstra.hpp"
 #include "min_cost_max_flow.hpp"
+#include "greedy.hpp"
+#include "generateGrapth.hpp"
 
 using namespace std;
 
 int main(){
+    int n = 20;
+    float den = 0.1;
 
-    Graph testG(7);
-    testG.add_arc(0, 6);
-    testG.add_arc(4, 2);
-     
-    testG.add_edge(1, 2);
-    testG.add_edge(2, 3);
-    testG.add_edge(3, 4);
-    testG.add_edge(4, 0);
 
-    testG.fill_cost_x(2);
+    for (int i =0; i < 6; i++){
+        Graph g = generate_graph(5 + i, den, den, false);
+        if (!isConnected_from_v(4, g)){
+            cout << "failed on i = " << i << endl;
+            g.printOut();
+            exit(1);
+        }
+        cout << "made the graph\n";
 
-    testG.printOut();
+        Graph greedy = Greedy_make_graph_even(g);
+        cout << "greedy with cost = " <<  graph_cost(g) << "\n";
+        
+        Graph bruteforce = make_even_brute_force(g);
+        cout << "brute with cost = " <<  graph_cost(g) << "\n";
 
-    testG.creat_prev_list();
-    vector<bool> tmp(testG.n_vertex, false);
 
-    std::cout << std::boolalpha <<
-        // "is connected from 0 " << isConnected_from_v(0, testG) << endl <<
-        // "is connected from 1 " << isConnected_from_v(1, testG) << endl << 
-        // "is connected from 2 " << isConnected_from_v(2, testG) << endl <<
-        // "is connected from 3 " << isConnected_from_v(3, testG) << endl << 
-        // "is connected from 4 " << isConnected_from_v(4, testG) << endl <<
-        endl <<
-        "is even " << isEven(testG) << endl << 
-        endl <<
-        "is symetric " << isSymetric(testG) << endl << 
-        endl <<
-        // "cost from 0 -> 2 = " << dijkstra_mixed_graph(4 ,3, testG) <<
-        endl;
+        if (!isEven(greedy)){
+            cout << "failed greedy on i = " << i << endl;
+            g.printOut();
+            exit(2);
+        }
 
-    Graph new_graph = make_even_brute_force(testG);
+        if (!isEven(bruteforce)){
+            cout << "failed bruteforce on i = " << i << endl;
+            g.printOut();
+            exit(2);
+        }
 
-    new_graph.printOut();
-    
+    }
+    cout << "didn't fail";
 }

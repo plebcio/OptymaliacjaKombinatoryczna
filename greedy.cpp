@@ -27,6 +27,7 @@ Graph Greedy_make_graph_even(Graph g){
     int n_uneven = uneven_V.size(); 
 
     if (n_uneven%2){
+        cout << "\ncant have graph with odd number of uneven vertexes";
         throw "cant have graph with odd number of uneven vertexes";
     }
 

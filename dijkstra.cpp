@@ -79,14 +79,6 @@ int dijkstra_mixed_graph(int start_V, int target_V, Graph g){
         }
     }
 
-    cout << '\n';
-    // zwraca scieżke do targer_V
-    for (auto elem: paths[target_V]){
-        cout << elem <<  "->";
-    }
-    cout << '\n';
-    cout << '\n';
-
     // zawraca koszt tej scieźki
     return path_cost[target_V];
 } 

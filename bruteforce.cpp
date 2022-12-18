@@ -56,6 +56,7 @@ Graph make_even_brute_force(Graph g){
     int n_uneven = uneven_V.size(); 
 
     if (n_uneven%2){
+        cout << "cant have graph with odd number of uneven vertexes\n";
         throw "cant have graph with odd number of uneven vertexes";
     }
 
@@ -92,13 +93,15 @@ Graph make_even_brute_force(Graph g){
     // trzeba sprawdzic wszyskie k elementowe kombinacje od k=n'/2 do k=n'-1
     // gdzie n' = all_possible_pairs.size()
     // np: optymalnym rozwiązaniem moze byc podłączenie wszyskich nieparzystych wierzchołków z jednym wierzchołkiem 
-    int n_prim = n_prim = all_possible_pairs.size();
-    for (int k = n_prim/2; k < n_prim; k++){
+    int n_prim = all_possible_pairs.size();
+    for (int k = n_uneven/2; k < n_uneven; k++){
+    
+        cout << "k = " << k << " until " << n_prim <<  endl;
 
         // kazda kombinacja to wektor indeksów do wektora all_possible_pairs
         vector<vector<int>> combiantions = comb(all_possible_pairs.size(), k);
         
-        
+
         for (auto combination: combiantions){
             Graph tmp_graph(g);
             int cost_sum = 0;
@@ -113,12 +116,10 @@ Graph make_even_brute_force(Graph g){
             }
 
 
-            // // jesli koszt dla tego grafu jest wiekszy od kosztu minimalnego to mozna od razu go odrzucic
-            // if (cost_sum > min_cost_sum){    
-            //     continue;
-            // }
-
             // jesli powstały graf nie jest parzysty odrzucamy tę kombinacje
+            if(!isEven(tmp_graph)){
+                continue;
+            }
 
             // koszt cyklu eulera przez taki graf to suma kosztów wsztstkich krawędzi i łuków
             int path_cost = graph_cost(tmp_graph);
@@ -131,57 +132,4 @@ Graph make_even_brute_force(Graph g){
     }
     
     return min_cost_graph;
-}
-
-// makes graph even using greedy aproach
-Graph Greedy_make_graph_even(Graph g){
-    if (isEven(g)){
-        return g;
-    }
-
-    list <int> uneven_V;
-
-    // find all uneven vertexes
-    for (int i = 0; i < g.n_vertex; i++){
-        if ( ( g.arc_adj[i].size() + g.arc_prev[i].size() + g.edge_adj[i].size() ) % 2 ){
-            // suma wchodza, wychodzacych i krawedzi % 2 != 0
-            uneven_V.push_back(i);
-        }
-    }
-
-    int n_uneven = uneven_V.size(); 
-
-    if (n_uneven%2){
-        throw "cant have graph with odd number of uneven vertexes";
-    }
-
-    // znajdz takie połączenie wierzchołków w pary ze suma kosztów dodania takich krawedzi jest minimalny 
-    // minimal cost matching problem
-
-
-    // obliczam koszt dla kazdej pary wierzchołków
-    vector <vector<int>> matching_cost(n_uneven, vector<int> (n_uneven, -1));
-    
-    for (int i = 0; i < uneven_V.size(); i++){
-        for (int j = 0; j < uneven_V.size(); j++){
-            if (i == j){
-                matching_cost[i][j] == INF;
-            } else {
-                list <int> path_i_j;
-                matching_cost[i][j] = dijkstra_mixed_graph(i, j, g);
-            }
-        }  
-    }
-
-    // znajdujemy matching o minimalnym koszcie uzywając medoty węgiersiej
-    // ref https://en.wikipedia.org/wiki/Hungarian_algorithm
-    // zamiast O(n!) jest O(n^3)
-    for (int i = 0; i < uneven_V.size(); i++){
-        // hungarian things TODOOOOOOO
-    }
-
-    // dodaje dobre krawedzie do grafu - jako łuki
-    // return ten graf - jest even -> rozwazanie wielomianowe
-
-
 }
